@@ -1,21 +1,17 @@
 const inputVideo = document.getElementById('input_video');
 const videoTag = document.getElementById('video_tag');
 const videoSource = document.getElementById('video_source');
-// const imgOne = document.getElementById('imgOne');
-// const imgTwo = document.getElementById('imgTwo');
+
 const quantityPoints = document.getElementById('pointsQantity');
 const buttonLoad = document.getElementById('button_load');
 const buttonCalculate = document.getElementById('button_calculate');
-
-// const canvasOne = document.getElementById('canvas_one');
-// const canvasTwo = document.getElementById('canvas_two');
-// let contextOne = canvasOne.getContext('2d');
-// let contextTwo = canvasTwo.getContext('2d');
+const maxRange = document.getElementById('max_range');
 
 let videoDuration = 0;
 let currentTime = 0;
 let actualVideo;
 let endCalculated = false;
+let maxPixelsPerFrame = 0;
 let arrayRGBImageOne = [];
 let arrayRGBImageTwo = [];
 const MAX_PRESITION = 0.01; // 1%
@@ -28,7 +24,6 @@ function calculate() {
 }
 
 function getFrames(currentSecond, previousCanvasImage, previousContexImage) {
-    console.log(currentSecond);
     currentTime = actualVideo.currentTime = currentSecond;
     videoTag.onseeked = function(event) {
         let canvas = document.createElement('canvas');
@@ -36,13 +31,11 @@ function getFrames(currentSecond, previousCanvasImage, previousContexImage) {
         canvas.width = videoTag.videoWidth;
         let context = canvas.getContext('2d');
         context.drawImage(videoTag, 0, 0, canvas.width, canvas.height);
-        // context.drawImage(img, 0, 0, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight);
         let img = new Image();
         img.src = canvas.toDataURL();
         drawFrames(img, this.currentTime, event); // Quitar esto
         if (previousCanvasImage != null && previousContexImage != null) {
-            //Comparar frames
-            compareFrames(10, previousCanvasImage, previousContexImage, canvas, context);
+            compareFrames(200000, previousCanvasImage, previousContexImage, canvas, context);
         }
         if(currentSecond <= videoDuration) {
             getFrames(currentSecond+1, canvas, context);
@@ -58,23 +51,26 @@ function loadVideo() {
     arrayRGBImageTwo = [];
     // if (imgOne.files && imgOne.files[0] && imgTwo.files && imgTwo.files[0] && quantityPoints.value) {
     if (inputVideo.value && inputVideo.files[0]) {
+        document.getElementById('frames').innerHTML = '';
         readVideo(inputVideo.files[0]);
         // let iterations = Number(quantityPoints.value);
         // getRGBrandomValues(1, imgOne.files[0], contextOne, canvasOne, iterations, getRGBarray);
         // getRGBrandomValues(2, imgTwo.files[0], contextTwo, canvasTwo, iterations, getRGBarray);
     } else {
-        window.alert('Aun no ha seleccionado archivos');
+        window.alert('Aun no ha seleccionado un video');
     }
 }
 
 function readVideo(video) {
     let reader = new FileReader();
     reader.onload = function(event) {
-        videoSource.src = URL.createObjectURL(video); //event.target.result;
+        videoSource.src = URL.createObjectURL(video);
         videoTag.load();
         videoTag.onloadedmetadata = function() {
             window.URL.revokeObjectURL(videoTag.src);
-            videoDuration = Math.floor(videoTag.duration)
+            videoDuration = Math.floor(videoTag.duration);
+            maxPixelsPerFrame = videoTag.videoWidth * videoTag.videoHeight;
+            maxRange.textContent = videoTag.videoWidth * videoTag.videoHeight;
             actualVideo = videoTag;
         }
     }.bind(this);
@@ -90,17 +86,7 @@ function drawFrames(image, seconds, event) {
     }
 }
 
-function getFamesFromVideo() {
-
-}
-
-function compareRGBWithMontecarlo(IDImage, array) {
-    if (IDImage === 1) {
-        arrayRGBImageOne = array;
-    }
-    if (IDImage === 2) {
-        arrayRGBImageTwo = array;
-    }
+function compareRGBWithMontecarlo(arrayRGBImageOne, arrayRGBImageTwo) {
     if (arrayRGBImageOne.length > 0 && arrayRGBImageTwo.length > 0) {
         let rImageOne = arrayRGBImageOne[0];
         let gImageOne = arrayRGBImageOne[1];
@@ -114,9 +100,9 @@ function compareRGBWithMontecarlo(IDImage, array) {
         if ((rImageTwo < rImageOne-percentageRImgOne || rImageTwo > rImageOne+percentageRImgOne) ||
         (gImageTwo < gImageOne-percentageGImgOne || gImageTwo > gImageOne+percentageGImgOne) ||
         (bImageTwo < bImageOne-percentageBImgOne || bImageTwo > bImageOne+percentageBImgOne)) {
-            window.alert('Por lo tanto se movio esa mondá!!!');
+            console.log('Se movio!!!');
         } else {
-            window.alert('No se movio');
+            console.log('No se movio');
         }
     }
 }
@@ -143,8 +129,7 @@ function getRGBrandomValues(IDImage, image, context, canvas, iterations, cbArray
 function compareFrames(iterations, canvasOne, contextOne, canvasTwo, contextTwo) {
     arrayRGBImageOne = getSumRGBfromRandomPixels(iterations, contextOne, canvasOne.width, canvasOne.height);
     arrayRGBImageTwo = getSumRGBfromRandomPixels(iterations, contextTwo, canvasTwo.width, canvasTwo.height);
-    console.log(arrayRGBImageOne);
-    console.log(arrayRGBImageTwo);
+    compareRGBWithMontecarlo(arrayRGBImageOne, arrayRGBImageTwo);
 }
 
 function getSumRGBfromRandomPixels(iterations, context, imgWidth, imgHeight) {
