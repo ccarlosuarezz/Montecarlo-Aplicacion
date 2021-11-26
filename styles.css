@@ -11,7 +11,7 @@ body {
     justify-content: space-around;
     align-items: center;
     font-family: sans-serif;
-    margin: 20px;
+    padding: 20px;
 }
 
 .general_container {
@@ -120,13 +120,21 @@ body {
     cursor: pointer;
 }
 
+.video_result {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    column-gap: 20px;
+}
+
 video {
     border-radius: 10px;
 }
 
 .table_container {
-    max-height: 300px;
-    /* overflow-y: auto; */
+    max-height: 350px;
+    overflow-y: auto;
     margin-top: 20px;
     border-bottom:solid black 1px;
 }

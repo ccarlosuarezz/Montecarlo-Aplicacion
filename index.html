@@ -4,24 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="animation.png" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
-    <title>Document</title>
-</head>
-<body>
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montecarlo-Movimiento</title>
+    <title>Montecarlo Aplicación</title>
 </head>
 <body>
     <h1>Montecarlo - Deteccion de movimiento</h1>
     <div class="general_container">
         <div class="form_container">
             <div>
-                <p>Video</p>
                 <input type="file" accept="video/*" id="input_video" class="select_video">
             </div>
             <button id="button_load" class="button"><strong>Cargar Video</strong></button>
@@ -51,32 +42,33 @@
         </div>
         <button id="button_calculate" class="button"><strong>Calcular</strong></button>
     </div>
-    <video controls id="video_tag">
-        <source id="video_source">
-    </video>
-    <div class="table_container">
-        <table>
-            <thead>
-                <tr>
-                    <th>n (segundos)</th>
-                    <th>Frame<sub>n</sub></th>
-                    <th>Frame<sub>n+1</sub></th>
-                    <th>Hay movimiento?</th>
-                </tr>
-            </thead>
-            <tbody id="frame_movement_list">
-                <tr>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>?</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="video_result">
+        <video controls id="video_tag">
+            <source id="video_source">
+        </video>
+        
+        <div class="table_container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>n (segundos)</th>
+                        <th>Frame<sub>n</sub></th>
+                        <th>Frame<sub>n+1</sub></th>
+                        <th>Hay movimiento?</th>
+                    </tr>
+                </thead>
+                <tbody id="frame_movement_list">
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>?</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div id="frames"></div>
     <script src="montecarlo.js"></script>
-</body>
-</html>
 </body>
 </html>
