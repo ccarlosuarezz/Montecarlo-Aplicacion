@@ -18,14 +18,16 @@
 </head>
 <body>
     <h1>Montecarlo - Deteccion de movimiento</h1>
-    <div class="form_container">
-        <div>
-            <p>Video</p>
-            <input type="file" accept="video/*" id="input_video">
+    <div class="general_container">
+        <div class="form_container">
+            <div>
+                <p>Video</p>
+                <input type="file" accept="video/*" id="input_video" class="select_video">
+            </div>
+            <button id="button_load" class="button">Cargar Video</button>
         </div>
-        <button id="button_load">Cargar Video</button>
-        <div>
-            <div class="points">
+        <div class="form_container">
+            <div class="forms">
                 <p>0 <</p>
                 <div class="form">
                     <input type="number" name="points_value" id="pointsQantity" autocomplete="off" required/>
@@ -36,14 +38,18 @@
                 <p id="max_range"><= 0</p>
             </div>
             
-            <p>Porcentaje de precisión</p>
-            <div class="points">
+            <div class="forms">
                 <p>0% <</p>
-                <input type="number" name="" id="presition_percentage">
+                <div class="form">
+                    <input type="number" name="presition_value" id="presition_percentage" autocomplete="off" required/>
+                    <label for="presition_value" class="label_input">
+                        <span class="content_input">Porcentaje de precisión</span>
+                    </label>
+                </div>
                 <p><= 100%</p>
             </div>
         </div>
-        <button id="button_calculate">Calcular</button>
+        <button id="button_calculate" class="button">Calcular</button>
     </div>
     <video controls id="video_tag">
         <source id="video_source">
