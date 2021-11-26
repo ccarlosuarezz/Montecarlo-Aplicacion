@@ -18,17 +18,21 @@
 </head>
 <body>
     <h1>Montecarlo - Deteccion de movimiento</h1>
-    <div>
+    <div class="form_container">
         <div>
             <p>Video</p>
             <input type="file" accept="video/*" id="input_video">
         </div>
         <button id="button_load">Cargar Video</button>
         <div>
-            <p>Puntos al azar</p>
             <div class="points">
                 <p>0 <</p>
-                <input type="number" name="" id="pointsQantity">
+                <div class="form">
+                    <input type="number" name="points_value" id="pointsQantity" autocomplete="off" required/>
+                    <label for="points_value" class="label_input">
+                        <span class="content_input">Puntos al azar</span>
+                    </label>
+                </div>
                 <p id="max_range"><= 0</p>
             </div>
             

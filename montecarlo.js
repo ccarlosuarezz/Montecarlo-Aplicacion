@@ -23,6 +23,33 @@ let presition = 0;
 buttonLoad.addEventListener('click', loadVideo);
 buttonCalculate.addEventListener('click', calculate);
 
+function loadVideo() {
+    arrayRGBImageOne = [];
+    arrayRGBImageTwo = [];
+    if (inputVideo.value && inputVideo.files[0]) {
+        document.getElementById('frames').innerHTML = '';
+        readVideo(inputVideo.files[0]);
+    } else {
+        window.alert('Aun no ha seleccionado un video');
+    }
+}
+
+function readVideo(video) {
+    let reader = new FileReader();
+    reader.onload = function(event) {
+        videoSource.src = URL.createObjectURL(video);
+        videoTag.load();
+        videoTag.onloadedmetadata = function() {
+            window.URL.revokeObjectURL(videoTag.src);
+            videoDuration = Math.floor(videoTag.duration);
+            maxPixelsPerFrame = videoTag.videoWidth * videoTag.videoHeight;
+            maxRange.textContent = `<= ${maxPixelsPerFrame}`;
+            actualVideo = videoTag;
+        }
+    }.bind(this);
+    reader.readAsDataURL(video);
+}
+
 function calculate() {
     if (actualVideo != null) {
         if(quantityPoints.value && presitionPercentage.value) {
@@ -52,7 +79,6 @@ function getFrames(iterations, currentSecond, previousCanvasImage, previousConte
         context.drawImage(videoTag, 0, 0, canvas.width, canvas.height);
         let img = new Image();
         img.src = canvas.toDataURL();
-        //drawFrames(img, this.currentTime, event); // Quitar esto
         if (previousCanvasImage != null && previousContexImage != null) {
             compareFrames(iterations, currentSecond, previousCanvasImage, previousContexImage, currentSecond+1,  canvas, context);
         }
@@ -61,82 +87,6 @@ function getFrames(iterations, currentSecond, previousCanvasImage, previousConte
         } else {
             endCalculated = true;
             return;
-        }
-    }
-}
-
-function loadVideo() {
-    arrayRGBImageOne = [];
-    arrayRGBImageTwo = [];
-    if (inputVideo.value && inputVideo.files[0]) {
-        document.getElementById('frames').innerHTML = '';
-        readVideo(inputVideo.files[0]);
-    } else {
-        window.alert('Aun no ha seleccionado un video');
-    }
-}
-
-function readVideo(video) {
-    let reader = new FileReader();
-    reader.onload = function(event) {
-        videoSource.src = URL.createObjectURL(video);
-        videoTag.load();
-        videoTag.onloadedmetadata = function() {
-            window.URL.revokeObjectURL(videoTag.src);
-            videoDuration = Math.floor(videoTag.duration);
-            maxPixelsPerFrame = videoTag.videoWidth * videoTag.videoHeight;
-            maxRange.textContent = `<= ${maxPixelsPerFrame}`;
-            actualVideo = videoTag;
-        }
-    }.bind(this);
-    reader.readAsDataURL(video);
-}
-
-function drawFrames(image, seconds, event) {
-    if (event.type == 'seeked' && !endCalculated) {
-        let li = document.createElement('li');
-        li.innerHTML = '<b>Imagen en el segundo ' + seconds + ':</b><br />';
-        document.getElementById('frames').appendChild(li);
-        document.getElementById('frames').appendChild(image);
-    }
-}
-
-function compareRGBWithMontecarlo(arrayRGBImageOne, arrayRGBImageTwo) {
-    // if (arrayRGBImageOne.length > 0 && arrayRGBImageTwo.length > 0) {
-        let rImageOne = arrayRGBImageOne[0];
-        let gImageOne = arrayRGBImageOne[1];
-        let bImageOne = arrayRGBImageOne[2];
-        let rImageTwo = arrayRGBImageTwo[0];
-        let gImageTwo = arrayRGBImageTwo[1];
-        let bImageTwo = arrayRGBImageTwo[2];
-        let percentageRImgOne = rImageOne * presition;
-        let percentageGImgOne = gImageOne * presition;
-        let percentageBImgOne = bImageOne * presition;
-        if ((rImageTwo < rImageOne-percentageRImgOne || rImageTwo > rImageOne+percentageRImgOne) ||
-        (gImageTwo < gImageOne-percentageGImgOne || gImageTwo > gImageOne+percentageGImgOne) ||
-        (bImageTwo < bImageOne-percentageBImgOne || bImageTwo > bImageOne+percentageBImgOne)) {
-            return true;
-        } else {
-            return false;
-        }
-    // }
-}
-
-function getRGBrandomValues(IDImage, image, context, canvas, iterations, cbArrayRGB) {
-    let reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = function () {
-        let img = new Image();
-        img.src = reader.result;
-        img.onload = function() {
-            let arrayRGB = [];
-            let imgWidth = Number(img.width);
-            let imgHeight = Number(img.height);
-            canvas.width = imgWidth;
-            canvas.height = imgHeight;
-            context.drawImage(img, 0, 0, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight);
-            arrayRGB = generationRandomPointsMontecarlo(iterations, context, imgWidth, imgHeight);
-            cbArrayRGB(IDImage, arrayRGB);
         }
     }
 }
@@ -170,6 +120,25 @@ function getSumRGBfromRandomPixels(iterations, context, imgWidth, imgHeight) {
 
 function generateRandon(min, max) {
     return Math.floor((Math.random() * (max - min)) + min);
+}
+
+function compareRGBWithMontecarlo(arrayRGBImageOne, arrayRGBImageTwo) {
+    let rImageOne = arrayRGBImageOne[0];
+    let gImageOne = arrayRGBImageOne[1];
+    let bImageOne = arrayRGBImageOne[2];
+    let rImageTwo = arrayRGBImageTwo[0];
+    let gImageTwo = arrayRGBImageTwo[1];
+    let bImageTwo = arrayRGBImageTwo[2];
+    let percentageRImgOne = rImageOne * presition;
+    let percentageGImgOne = gImageOne * presition;
+    let percentageBImgOne = bImageOne * presition;
+    if ((rImageTwo < rImageOne-percentageRImgOne || rImageTwo > rImageOne+percentageRImgOne) ||
+    (gImageTwo < gImageOne-percentageGImgOne || gImageTwo > gImageOne+percentageGImgOne) ||
+    (bImageTwo < bImageOne-percentageBImgOne || bImageTwo > bImageOne+percentageBImgOne)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 function showResult(n, frameN, frameNplusOne, movement) {
