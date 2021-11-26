@@ -36,13 +36,14 @@ function getFrames(currentSecond, previousCanvasImage, previousContexImage) {
         canvas.width = videoTag.videoWidth;
         let context = canvas.getContext('2d');
         context.drawImage(videoTag, 0, 0, canvas.width, canvas.height);
+        // context.drawImage(img, 0, 0, imgWidth, imgHeight, 0, 0, imgWidth, imgHeight);
         let img = new Image();
         img.src = canvas.toDataURL();
         drawFrames(img, this.currentTime, event); // Quitar esto
-        //if (previousCanvasImage != null && previousContexImage != null) {
+        if (previousCanvasImage != null && previousContexImage != null) {
             //Comparar frames
-            //compareFrames(previousCanvasImage, previousContexImage, canvas, context);
-        //}
+            compareFrames(10, previousCanvasImage, previousContexImage, canvas, context);
+        }
         if(currentSecond <= videoDuration) {
             getFrames(currentSecond+1, canvas, context);
         } else {
@@ -86,7 +87,6 @@ function drawFrames(image, seconds, event) {
         li.innerHTML = '<b>Imagen en el segundo ' + seconds + ':</b><br />';
         document.getElementById('frames').appendChild(li);
         document.getElementById('frames').appendChild(image);
-        console.log(document.getElementById('frames').childNodes);
     }
 }
 
@@ -94,7 +94,7 @@ function getFamesFromVideo() {
 
 }
 
-function getRGBarray(IDImage, array) {
+function compareRGBWithMontecarlo(IDImage, array) {
     if (IDImage === 1) {
         arrayRGBImageOne = array;
     }
@@ -140,11 +140,14 @@ function getRGBrandomValues(IDImage, image, context, canvas, iterations, cbArray
     }
 }
 
-function compareFrames(contextOne, ContextTwo) {
-
+function compareFrames(iterations, canvasOne, contextOne, canvasTwo, contextTwo) {
+    arrayRGBImageOne = getSumRGBfromRandomPixels(iterations, contextOne, canvasOne.width, canvasOne.height);
+    arrayRGBImageTwo = getSumRGBfromRandomPixels(iterations, contextTwo, canvasTwo.width, canvasTwo.height);
+    console.log(arrayRGBImageOne);
+    console.log(arrayRGBImageTwo);
 }
 
-function generationRandomPointsMontecarlo(iterations, context, imgWidth, imgHeight) {
+function getSumRGBfromRandomPixels(iterations, context, imgWidth, imgHeight) {
     let xPixel = 0;
     let yPixel = 0;
     let sumRImg = 0;
