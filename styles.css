@@ -13,50 +13,44 @@ body {
     font-family: sans-serif;
 }
 
-.div_range {
+.points {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    column-gap: 5px;
 }
 
-input[type='range'] {
-    width: 210px;
-    height: 30px;
-    overflow: hidden;
-    cursor: pointer;
+.table_container {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 20px;
+    border-bottom:solid black 1px;
 }
 
-input[type='range'],
-input[type='range']::-webkit-slider-runnable-track,
-input[type='range']::-webkit-slider-thumb {
-    -webkit-appearance: none;
+table{
+    border-collapse:separate;
+    border-spacing: 0;
+    width: 500px;
+    text-align: left;
+    border:solid black 1px;
+    border-radius:6px;
+    -moz-border-radius:6px;
 }
 
-input[type='range']::-webkit-slider-runnable-track {
-    width: 200px;
-    height: 10px;
-    background: var(--green-color);
-    border: 2px solid var(--dark-green);
-    border-radius: 5px;
+th, td{
+    border-left:solid black 1px;
+    border-bottom:solid black 1px;
+    padding: 8px;
+    text-align: center;
 }
 
-input[type='range']::-webkit-slider-thumb {
-    position: relative;
-    height: 25px;
-    width: 25px;
-    margin-top: -10px;
-    background: white;
-    border-radius: 50%;
-    border: 2px solid var(--dark-green);
+td:first-child, th:first-child {
+    border-left: none;
 }
 
-input[type='range']::-webkit-slider-thumb::before {
-    position: absolute;
-    content: '';
-    height: 10px; /* equal to height of runnable track */
-    width: 500px; /* make this bigger than the widest range input element */
-    left: -502px; /* this should be -2px - width */
-    top: 8px; /* don't change this */
-    background: var(--dark-gray);
+thead {
+    background-color: var(--dark-green);
+    border-top: none;
+    color: white;
 }

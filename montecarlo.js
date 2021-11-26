@@ -3,27 +3,46 @@ const videoTag = document.getElementById('video_tag');
 const videoSource = document.getElementById('video_source');
 
 const quantityPoints = document.getElementById('pointsQantity');
+const presitionPercentage = document.getElementById('presition_percentage');
+
 const buttonLoad = document.getElementById('button_load');
 const buttonCalculate = document.getElementById('button_calculate');
+const frameMovementList = document.getElementById('frame_movement_list');
+
 const maxRange = document.getElementById('max_range');
 
 let videoDuration = 0;
 let currentTime = 0;
-let actualVideo;
+let actualVideo = null;
 let endCalculated = false;
 let maxPixelsPerFrame = 0;
 let arrayRGBImageOne = [];
 let arrayRGBImageTwo = [];
-const MAX_PRESITION = 0.01; // 1%
+let presition = 0;
 
 buttonLoad.addEventListener('click', loadVideo);
 buttonCalculate.addEventListener('click', calculate);
 
 function calculate() {
-    getFrames(0, null, null);
+    if (actualVideo != null) {
+        if(quantityPoints.value && presitionPercentage.value) {
+            let points = Number(quantityPoints.value);
+            if (points > 0 && points <= maxPixelsPerFrame && presitionPercentage.value > 0 && presitionPercentage.value <= 100) {
+                frameMovementList.innerHTML = '';
+                presition = (100 - Number(presitionPercentage.value)) / 100;
+                getFrames(points, 0, null, null);
+            } else {
+                window.alert('Los parametros ingresados superan el valor maximo'); 
+            }
+        } else {
+            window.alert('Aun no ha ingresado los parametros para realizar calculo');
+        }
+    } else {
+        window.alert('Aun no ha cargado un video');
+    }
 }
 
-function getFrames(currentSecond, previousCanvasImage, previousContexImage) {
+function getFrames(iterations, currentSecond, previousCanvasImage, previousContexImage) {
     currentTime = actualVideo.currentTime = currentSecond;
     videoTag.onseeked = function(event) {
         let canvas = document.createElement('canvas');
@@ -33,12 +52,12 @@ function getFrames(currentSecond, previousCanvasImage, previousContexImage) {
         context.drawImage(videoTag, 0, 0, canvas.width, canvas.height);
         let img = new Image();
         img.src = canvas.toDataURL();
-        drawFrames(img, this.currentTime, event); // Quitar esto
+        //drawFrames(img, this.currentTime, event); // Quitar esto
         if (previousCanvasImage != null && previousContexImage != null) {
-            compareFrames(200000, previousCanvasImage, previousContexImage, canvas, context);
+            compareFrames(iterations, currentSecond, previousCanvasImage, previousContexImage, currentSecond+1,  canvas, context);
         }
         if(currentSecond <= videoDuration) {
-            getFrames(currentSecond+1, canvas, context);
+            getFrames(iterations, currentSecond+1, canvas, context);
         } else {
             endCalculated = true;
             return;
@@ -49,13 +68,9 @@ function getFrames(currentSecond, previousCanvasImage, previousContexImage) {
 function loadVideo() {
     arrayRGBImageOne = [];
     arrayRGBImageTwo = [];
-    // if (imgOne.files && imgOne.files[0] && imgTwo.files && imgTwo.files[0] && quantityPoints.value) {
     if (inputVideo.value && inputVideo.files[0]) {
         document.getElementById('frames').innerHTML = '';
         readVideo(inputVideo.files[0]);
-        // let iterations = Number(quantityPoints.value);
-        // getRGBrandomValues(1, imgOne.files[0], contextOne, canvasOne, iterations, getRGBarray);
-        // getRGBrandomValues(2, imgTwo.files[0], contextTwo, canvasTwo, iterations, getRGBarray);
     } else {
         window.alert('Aun no ha seleccionado un video');
     }
@@ -70,7 +85,7 @@ function readVideo(video) {
             window.URL.revokeObjectURL(videoTag.src);
             videoDuration = Math.floor(videoTag.duration);
             maxPixelsPerFrame = videoTag.videoWidth * videoTag.videoHeight;
-            maxRange.textContent = videoTag.videoWidth * videoTag.videoHeight;
+            maxRange.textContent = `<= ${maxPixelsPerFrame}`;
             actualVideo = videoTag;
         }
     }.bind(this);
@@ -87,24 +102,24 @@ function drawFrames(image, seconds, event) {
 }
 
 function compareRGBWithMontecarlo(arrayRGBImageOne, arrayRGBImageTwo) {
-    if (arrayRGBImageOne.length > 0 && arrayRGBImageTwo.length > 0) {
+    // if (arrayRGBImageOne.length > 0 && arrayRGBImageTwo.length > 0) {
         let rImageOne = arrayRGBImageOne[0];
         let gImageOne = arrayRGBImageOne[1];
         let bImageOne = arrayRGBImageOne[2];
         let rImageTwo = arrayRGBImageTwo[0];
         let gImageTwo = arrayRGBImageTwo[1];
         let bImageTwo = arrayRGBImageTwo[2];
-        let percentageRImgOne = rImageOne * MAX_PRESITION;
-        let percentageGImgOne = gImageOne * MAX_PRESITION;
-        let percentageBImgOne = bImageOne * MAX_PRESITION;
+        let percentageRImgOne = rImageOne * presition;
+        let percentageGImgOne = gImageOne * presition;
+        let percentageBImgOne = bImageOne * presition;
         if ((rImageTwo < rImageOne-percentageRImgOne || rImageTwo > rImageOne+percentageRImgOne) ||
         (gImageTwo < gImageOne-percentageGImgOne || gImageTwo > gImageOne+percentageGImgOne) ||
         (bImageTwo < bImageOne-percentageBImgOne || bImageTwo > bImageOne+percentageBImgOne)) {
-            console.log('Se movio!!!');
+            return true;
         } else {
-            console.log('No se movio');
+            return false;
         }
-    }
+    // }
 }
 
 function getRGBrandomValues(IDImage, image, context, canvas, iterations, cbArrayRGB) {
@@ -126,10 +141,11 @@ function getRGBrandomValues(IDImage, image, context, canvas, iterations, cbArray
     }
 }
 
-function compareFrames(iterations, canvasOne, contextOne, canvasTwo, contextTwo) {
+function compareFrames(iterations, frameN, canvasOne, contextOne, frameNplusOne, canvasTwo, contextTwo) {
     arrayRGBImageOne = getSumRGBfromRandomPixels(iterations, contextOne, canvasOne.width, canvasOne.height);
     arrayRGBImageTwo = getSumRGBfromRandomPixels(iterations, contextTwo, canvasTwo.width, canvasTwo.height);
-    compareRGBWithMontecarlo(arrayRGBImageOne, arrayRGBImageTwo);
+    let isMovement = compareRGBWithMontecarlo(arrayRGBImageOne, arrayRGBImageTwo);
+    showResult(frameN, frameN, frameNplusOne, isMovement);
 }
 
 function getSumRGBfromRandomPixels(iterations, context, imgWidth, imgHeight) {
@@ -154,4 +170,25 @@ function getSumRGBfromRandomPixels(iterations, context, imgWidth, imgHeight) {
 
 function generateRandon(min, max) {
     return Math.floor((Math.random() * (max - min)) + min);
+}
+
+function showResult(n, frameN, frameNplusOne, movement) {
+    const newRow = document.createElement('tr');
+    const td_n = document.createElement('td');
+    const td_frameN = document.createElement('td');
+    const td_frameNplusOne = document.createElement('td');
+    const td_movement = document.createElement('td');
+    td_n.textContent = n;
+    td_frameN.textContent = frameN;
+    td_frameNplusOne.textContent = frameNplusOne;
+    if (movement) {
+        td_movement.textContent = 'SI';
+    } else {
+        td_movement.textContent = 'NO';
+    }
+    newRow.appendChild(td_n);
+    newRow.appendChild(td_frameN);
+    newRow.appendChild(td_frameNplusOne);
+    newRow.appendChild(td_movement);
+    frameMovementList.appendChild(newRow);
 }
