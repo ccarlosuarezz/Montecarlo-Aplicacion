@@ -4,37 +4,56 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Document</title>
+</head>
+<body>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montecarlo-Movimiento</title>
 </head>
 <body>
     <h1>Montecarlo - Deteccion de movimiento</h1>
     <div>
         <div>
-            <p>Cantidad de puntos al azar</p>
-            <input type="number" name="" id="pointsQantity">
+            <p>Video</p>
+            <input type="file" accept="video/*" id="input_video">
         </div>
-        <div>
+        <button id="button_load">Cargar Video</button>
+        <div id="div_range">
+            <p>Puntos al azar</p>
+            <input type="range" name="" id="pointsQantity">
+        </div>
+        <!-- <div>
             <p>Imagen 1</p>
             <input type="file" name="" id="imgOne">
         </div>
         <div>
             <p>Imagen 2</p>
             <input type="file" name="" id="imgTwo">
-        </div>
-        <button id="button">Calcular</button>
-        <p id="resultOne">Resultado img 1 = 0</p>
-        <p id="resultTwo">Resultado img 2 = 0</p>
+        </div> -->
+        <button id="button_calculate">Calcular</button>
     </div>
     <div id="result">
-        <div id="frames">
+        <!-- <div id="framesX">
             <p>Frame 1</p>
             <canvas id="canvas_one" width="0" height="0"></canvas>
         </div>
         <div>
             <p>Frame 2</p>
             <canvas id="canvas_two" width="0" height="0"></canvas>
-        </div>
+        </div> -->
     </div>
+    <video controls id="video_tag">
+        <source id="video_source">
+    </video>
+    <div id="frames"></div>
     <script src="montecarlo.js"></script>
+</body>
+</html>
 </body>
 </html>
