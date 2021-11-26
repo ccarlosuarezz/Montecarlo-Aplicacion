@@ -24,32 +24,32 @@
                 <p>Video</p>
                 <input type="file" accept="video/*" id="input_video" class="select_video">
             </div>
-            <button id="button_load" class="button">Cargar Video</button>
+            <button id="button_load" class="button"><strong>Cargar Video</strong></button>
         </div>
         <div class="form_container">
             <div class="forms">
-                <p>0 <</p>
+                <p class="limit"><strong>0 <</strong></p>
                 <div class="form">
                     <input type="number" name="points_value" id="pointsQantity" autocomplete="off" required/>
                     <label for="points_value" class="label_input">
                         <span class="content_input">Puntos al azar</span>
                     </label>
                 </div>
-                <p id="max_range"><= 0</p>
+                <p id="max_range" class="limit"><strong><= 0</strong></p>
             </div>
             
             <div class="forms">
-                <p>0% <</p>
+                <p class="limit"><strong>0% <</strong></p>
                 <div class="form">
                     <input type="number" name="presition_value" id="presition_percentage" autocomplete="off" required/>
                     <label for="presition_value" class="label_input">
                         <span class="content_input">Porcentaje de precisión</span>
                     </label>
                 </div>
-                <p><= 100%</p>
+                <p class="limit"><strong><= 100%</strong></p>
             </div>
         </div>
-        <button id="button_calculate" class="button">Calcular</button>
+        <button id="button_calculate" class="button"><strong>Calcular</strong></button>
     </div>
     <video controls id="video_tag">
         <source id="video_source">

@@ -43,7 +43,7 @@ function readVideo(video) {
             window.URL.revokeObjectURL(videoTag.src);
             videoDuration = Math.floor(videoTag.duration);
             maxPixelsPerFrame = videoTag.videoWidth * videoTag.videoHeight;
-            maxRange.textContent = `<= ${maxPixelsPerFrame}`;
+            maxRange.innerHTML = `<strong><= ${maxPixelsPerFrame}</strong>`;
             actualVideo = videoTag;
         }
     }.bind(this);

@@ -37,6 +37,12 @@ body {
     padding: 2px;
 }
 
+.limit {
+    border: 2px solid var(--green-color);
+    border-radius: 5px;
+    padding: 5px;
+}
+
 .forms {
     display: flex;
     flex-direction: row;
